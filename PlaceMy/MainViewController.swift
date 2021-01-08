@@ -36,12 +36,25 @@ class MainViewController: UITableViewController {
         
         // передает текст с массива в строку по его индексу
         cell.textLabel?.text = restaurantNames[indexPath.row]
+        
         // передает фото в строку по индексу массива
         cell.imageView?.image = UIImage(named: restaurantNames[indexPath.row])
+        
+        // скругление иконок в строке таблицы по ширене ячейки
+        cell.imageView?.layer.cornerRadius = cell.frame.size.height / 2
+        cell.imageView?.clipsToBounds = true
         
         
         // обязателььное возвращения информации строки
         return cell
+    }
+    
+    // MARK: - Table view dilegate
+    
+    
+    // Высота ячейки таблицы
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 85
     }
     
     
