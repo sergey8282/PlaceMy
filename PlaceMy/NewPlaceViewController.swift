@@ -10,7 +10,7 @@ import UIKit
 class NewPlaceViewController: UITableViewController {
     
     // вспомогательное свойство для добавления нового заведения с типом данных Place (класс в классе PlaceModsel)
-    var newPlace: Place?
+    var newPlace = Place()
     
     // Вспомагательное свойство для добавления фото по умалчанию когда пользователь не указал фото
     var imageIsChanget = false
@@ -33,6 +33,10 @@ class NewPlaceViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        DispatchQueue.main.async {
+            self.newPlace.savePlaces()
+        }
         
         
         // убирает линии ниже нужных в таблице
@@ -112,7 +116,7 @@ class NewPlaceViewController: UITableViewController {
             image = #imageLiteral(resourceName: "imagePlaceholder")
         }
         
-        newPlace = Place(name: plaseName.text!, location: plaseLocation.text, type: plaseType.text, image: image, restoranImage: nil)
+//        newPlace = Place(name: plaseName.text!, location: plaseLocation.text, type: plaseType.text, image: image, restoranImage: nil)
     }
 
     
