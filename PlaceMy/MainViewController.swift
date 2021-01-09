@@ -31,18 +31,18 @@ class MainViewController: UITableViewController {
 
     // Передает информацию в строку
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
         
         
         // передает текст с массива в строку по его индексу
-        cell.textLabel?.text = restaurantNames[indexPath.row]
+        cell.nameLabel.text = restaurantNames[indexPath.row]
         
         // передает фото в строку по индексу массива
-        cell.imageView?.image = UIImage(named: restaurantNames[indexPath.row])
+        cell.imageOfPlace.image = UIImage(named: restaurantNames[indexPath.row])
         
         // скругление иконок в строке таблицы по ширене ячейки
-        cell.imageView?.layer.cornerRadius = cell.frame.size.height / 2
-        cell.imageView?.clipsToBounds = true
+        cell.imageOfPlace.layer.cornerRadius = cell.imageOfPlace.frame.size.height / 2
+        cell.imageOfPlace.clipsToBounds = true
         
         
         // обязателььное возвращения информации строки
