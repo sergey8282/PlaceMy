@@ -31,17 +31,35 @@ class NewPlaceViewController: UITableViewController {
         
         if indexPath.row == 0 {
             
+            
+            // иконки для кнопки выбора
+            let cameraIcon = #imageLiteral(resourceName: "camera")
+            let photoIcon = #imageLiteral(resourceName: "photo")
+            
+            
+            
             // Создает контроллер меню
             let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            
             
             // Экшен выбор камеры в меню добовления
             let camera = UIAlertAction(title: "Camera", style: .default) { _ in
                 self.chooseImagePicker(source: .camera)
             }
+            // добовляет иконку к кнопке
+            camera.setValue(cameraIcon, forKey: "image")
+            // прижимает текст к левой границе
+            camera.setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")
+            
+            
             // Экшен выбор фото из галлереи при выборе в меню
             let photo = UIAlertAction(title: "Photo", style: .default) { _ in
                 self.chooseImagePicker(source: .photoLibrary)
             }
+            // добовляет иконку к кнопке
+            photo.setValue(photoIcon, forKey: "image")
+            // прижимает текст к левой границе
+            photo.setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")
             
             // Выход из меню добовления
             let cansel = UIAlertAction(title: "Cansel", style: .cancel)
@@ -76,20 +94,26 @@ extension NewPlaceViewController: UITextFieldDelegate {
 
 // MARK: Work with image
 
-// Метод для выбора в меню фото или камеры для загрузки изображения
+// Расширение класса для добовления и изменения изображения
 extension NewPlaceViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
+    
+    // Метод для выбора в меню фото или камеры для загрузки изображения
     func chooseImagePicker(source: UIImagePickerController.SourceType){
         
         // Проверка на доступность источника картинки
         if UIImagePickerController.isSourceTypeAvailable(source) {
+            
             //создаем имеге пикер контроллел
             let imagePicker = UIImagePickerController()
+            
             // делегирует в другой метод imagePickerController
             imagePicker.delegate = self
+            
             // позволяет отредактировать изображение
             imagePicker.allowsEditing = true
             imagePicker.sourceType = source
+            
             // отображает его на экране
             present(imagePicker, animated: true)
         }
@@ -100,10 +124,13 @@ extension NewPlaceViewController: UIImagePickerControllerDelegate, UINavigationC
         
         // метод дает возможность работать над редактированием изображения
         imageOfPlase.image = info[.editedImage] as? UIImage
+        
         // определяем моштаб
         imageOfPlase.contentMode = .scaleAspectFill
+        
         // обрезка по границе
         imageOfPlase.clipsToBounds = true
+        
         // закрытие метода
         dismiss(animated: true)
     }
