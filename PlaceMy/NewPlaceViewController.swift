@@ -8,7 +8,13 @@
 import UIKit
 
 class NewPlaceViewController: UITableViewController {
-
+    
+    // Оутлет изображения
+    @IBOutlet weak var imageOfPlase: UIImageView!
+    
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -71,7 +77,7 @@ extension NewPlaceViewController: UITextFieldDelegate {
 // MARK: Work with image
 
 // Метод для выбора в меню фото или камеры для загрузки изображения
-extension NewPlaceViewController {
+extension NewPlaceViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     func chooseImagePicker(source: UIImagePickerController.SourceType){
         
@@ -79,11 +85,26 @@ extension NewPlaceViewController {
         if UIImagePickerController.isSourceTypeAvailable(source) {
             //создаем имеге пикер контроллел
             let imagePicker = UIImagePickerController()
+            // делегирует в другой метод imagePickerController
+            imagePicker.delegate = self
             // позволяет отредактировать изображение
             imagePicker.allowsEditing = true
             imagePicker.sourceType = source
             // отображает его на экране
             present(imagePicker, animated: true)
         }
+    }
+    
+    // этот метот присваиват выбранное изображение
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        // метод дает возможность работать над редактированием изображения
+        imageOfPlase.image = info[.editedImage] as? UIImage
+        // определяем моштаб
+        imageOfPlase.contentMode = .scaleAspectFill
+        // обрезка по границе
+        imageOfPlase.clipsToBounds = true
+        // закрытие метода
+        dismiss(animated: true)
     }
 }
