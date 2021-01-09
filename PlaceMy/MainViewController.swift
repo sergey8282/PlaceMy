@@ -10,8 +10,8 @@ import UIKit
 class MainViewController: UITableViewController {
     
 
-    
-    let places = Place.getPlaces()
+    // масив с заведениями с класса PlaceModel
+    var places = Place.getPlaces()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,18 +30,27 @@ class MainViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
         
+        // Упрощает конструкцию масива по индексу
+        let place = places[indexPath.row]
+        
         
         // передает текст с массива в строку по его индексу
-        cell.nameLabel.text = places[indexPath.row].name
+        cell.nameLabel.text = place.name
         
         // передает текс с масива в лейбел локации
-        cell.locationLabel.text = places[indexPath.row].location
+        cell.locationLabel.text = place.location
         
         // передает текс с масива в typeLabel
-        cell.typeLabel.text = places[indexPath.row].type
+        cell.typeLabel.text = place.type
         
-        // передает фото в строку по индексу массива
-        cell.imageOfPlace.image = UIImage(named: places[indexPath.row].image)
+        if place.image == nil {
+            // передает фото в строку по индексу массива
+            cell.imageOfPlace.image = UIImage(named: place.restoranImage!)
+        } else {
+            // передает изображение самого свойства image
+            cell.imageOfPlace.image = place.image
+        }
+        
         
         // скругление иконок в строке таблицы по ширене ячейки
         cell.imageOfPlace.layer.cornerRadius = cell.imageOfPlace.frame.size.height / 2
@@ -73,7 +82,21 @@ class MainViewController: UITableViewController {
     }
     */
     
-    @IBAction func cancelAction(_ segue: UIStoryboardSegue) {
+    
+    // Кнопка Cave при добавлении нового заведения
+    @IBAction func anvinSegue(_ segue: UIStoryboardSegue) {
+        
+        guard let newPlaseVC = segue.source as? NewPlaceViewController else { return }
+        
+        // запускает метод в класе NewPlaceViewController
+        newPlaseVC.saveNewPlace()
+        
+        // добовляет в массив новые данные заведения
+        places.append(newPlaseVC.newPlace!)
+        
+        // обновляет интерфейс
+        tableView.reloadData()
+        
         
     }
 

@@ -9,11 +9,27 @@ import UIKit
 
 class NewPlaceViewController: UITableViewController {
     
+    // вспомогательное свойство для добавления нового заведения с типом данных Place (класс в классе PlaceModsel)
+    var newPlace: Place?
+    
+    // Вспомагательное свойство для добавления фото по умалчанию когда пользователь не указал фото
+    var imageIsChanget = false
+    
+    
+    // Кнопка сохранения
+    @IBOutlet weak var saveButton: UIBarButtonItem!
+    
     // Оутлет изображения
-    @IBOutlet weak var imageOfPlase: UIImageView!
+    @IBOutlet weak var placeImage: UIImageView!
     
+    // Текстфилд Названия
+    @IBOutlet weak var plaseName: UITextField!
     
+    // Текстфилд адреса
+    @IBOutlet weak var plaseLocation: UITextField!
     
+    // Тексфилд описания
+    @IBOutlet weak var plaseType: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,6 +37,12 @@ class NewPlaceViewController: UITableViewController {
         
         // убирает линии ниже нужных в таблице
         tableView.tableFooterView = UIView()
+        
+        // скрывает кнопку Cave
+        saveButton.isEnabled = false
+        
+        // метод условия для появления кнопки Cave
+        plaseName.addTarget(self, action: #selector(textFildChanget), for: .editingChanged)
 
     }
     
@@ -29,6 +51,7 @@ class NewPlaceViewController: UITableViewController {
     // Условие при нажатии первой ячейки вызывается меню на остальные скрывается клавиатура
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        // если нажата первая строчка в таблице то появляется меню
         if indexPath.row == 0 {
             
             
@@ -73,11 +96,33 @@ class NewPlaceViewController: UITableViewController {
             present(actionSheet, animated: true)
             
         } else {
+            // Если нажаты остальные строчки кроме первой то клавиатура сворачивается
             view.endEditing(true)
         }
     }
+    
+    // метод для добавления нового заведения и трансляции новых значений
+    func saveNewPlace() {
+        
+        var image: UIImage?
+        
+        if imageIsChanget {
+            image = placeImage.image
+        } else {
+            image = #imageLiteral(resourceName: "imagePlaceholder")
+        }
+        
+        newPlace = Place(name: plaseName.text!, location: plaseLocation.text, type: plaseType.text, image: image, restoranImage: nil)
+    }
 
-
+    
+    // Кнопка назад с методом возврата и удалении из памяти
+    @IBAction func canselAction(_ sender: Any) {
+        
+        // возврат и удалении из памяти
+        dismiss(animated: true)
+    }
+    
 
 }
 
@@ -89,6 +134,18 @@ extension NewPlaceViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+    
+    // Условие при котором кнопка Cave показывается
+    @objc private func textFildChanget() {
+        
+        // Если текстфилд названия заполнен то кнопка показывается
+        if plaseName.text?.isEmpty == false{
+            saveButton.isEnabled = true
+            // Если не заполнено то не показывается
+        } else {
+            saveButton.isEnabled = false
+        }
     }
 }
 
@@ -123,13 +180,16 @@ extension NewPlaceViewController: UIImagePickerControllerDelegate, UINavigationC
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
         // метод дает возможность работать над редактированием изображения
-        imageOfPlase.image = info[.editedImage] as? UIImage
+        placeImage.image = info[.editedImage] as? UIImage
         
         // определяем моштаб
-        imageOfPlase.contentMode = .scaleAspectFill
+        placeImage.contentMode = .scaleAspectFill
         
         // обрезка по границе
-        imageOfPlase.clipsToBounds = true
+        placeImage.clipsToBounds = true
+        
+        // отключает фото по умолчанию
+        imageIsChanget = true
         
         // закрытие метода
         dismiss(animated: true)
