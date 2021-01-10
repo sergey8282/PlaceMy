@@ -9,6 +9,10 @@ import UIKit
 
 class NewPlaceViewController: UITableViewController {
     
+    
+    // Передаем текущее заведение для редактирования
+    var currenPlace: Place?
+    
 
     
     // Вспомагательное свойство для добавления фото по умалчанию когда пользователь не указал фото
@@ -43,6 +47,9 @@ class NewPlaceViewController: UITableViewController {
         
         // метод условия для появления кнопки Cave
         plaseName.addTarget(self, action: #selector(textFildChanget), for: .editingChanged)
+        
+        // запускает метод для изменения заведения
+        setupEditScrin()
 
     }
     
@@ -98,11 +105,13 @@ class NewPlaceViewController: UITableViewController {
         } else {
             // Если нажаты остальные строчки кроме первой то клавиатура сворачивается
             view.endEditing(true)
+            
+            
         }
     }
     
     // метод для добавления нового заведения и трансляции новых значений
-    func saveNewPlace() {
+    func savePlace() {
         
         // создаем переменную для записи изображения
         var image: UIImage?
@@ -120,8 +129,55 @@ class NewPlaceViewController: UITableViewController {
         // конструктор полей передоваемых значений в классе
         let newPlace = Place(name: plaseName.text!, location: plaseLocation.text, type: plaseType.text, imageData: imageData)
         
-        // записываем данные в базу данных
-        StorageManager.saveObject(newPlace)
+        // выесняем, редактируется или добавляется новая
+        if currenPlace != nil {
+            try! realm.write {
+                currenPlace?.name = newPlace.name
+                currenPlace?.location = newPlace.location
+                currenPlace?.type = newPlace.type
+                currenPlace?.imageData = newPlace.imageData
+            }
+        }else{
+            // записываем данные в базу данных новое заведение
+            StorageManager.saveObject(newPlace)
+        }
+        
+
+    }
+    
+    
+    // Передаем все значения в аутлеты для изменения
+    private func setupEditScrin() {
+        
+        if currenPlace != nil {
+            // метод меняет условия кнопки саве
+            setupNavigationBar()
+            // сохраняет фото
+            imageIsChanget = true
+            
+            guard let data = currenPlace?.imageData, let image = UIImage(data: data) else { return }
+            
+            placeImage.image = image // присваивает фото
+            placeImage.contentMode = .scaleAspectFill // Растягивает фото по всей поверхности
+            plaseName.text = currenPlace?.name // присваивает имя
+            plaseLocation.text = currenPlace?.location // присваивает адрес
+            plaseType.text = currenPlace?.type // присваивает описание
+        }
+    }
+    
+    // меняет условия появления кнопки сетап при редактировании
+    private func setupNavigationBar() {
+        
+        // Изменяет кнопку назад при редактировании
+        if let topItem = navigationController?.navigationBar.topItem {
+            topItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        }
+        
+        navigationItem.leftBarButtonItem = nil
+        // передает название заведения в верхний бар
+        title = currenPlace?.name
+        // появляется кнопка
+        saveButton.isEnabled = true
     }
 
     

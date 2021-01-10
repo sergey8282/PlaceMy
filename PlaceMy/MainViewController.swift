@@ -10,6 +10,9 @@ import RealmSwift
 
 class MainViewController: UITableViewController {
     
+    
+    
+    
 
     // масив с заведениями с класса PlaceModel
     var places: Results<Place>!
@@ -99,16 +102,23 @@ class MainViewController: UITableViewController {
     
     
     
-    /*
+
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    // редактирование имеющихся заведений
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        
+        
+        if segue.identifier == "showDitail" {
+            // Определяет выбранную ячейку
+            guard let indexPath = tableView.indexPathForSelectedRow else { return }
+            let place = places[indexPath.row]
+            // создаем параметр выбраной ячейки
+            let newPlaceVC = segue.destination as! NewPlaceViewController
+            newPlaceVC.currenPlace = place
+        }
+
     }
-    */
-    
     
     // Кнопка Cave при добавлении нового заведения
     @IBAction func anvinSegue(_ segue: UIStoryboardSegue) {
@@ -116,7 +126,7 @@ class MainViewController: UITableViewController {
         guard let newPlaseVC = segue.source as? NewPlaceViewController else { return }
         
         // запускает метод в класе NewPlaceViewController
-        newPlaseVC.saveNewPlace()
+        newPlaseVC.savePlace()
         
 
         
