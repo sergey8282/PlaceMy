@@ -8,14 +8,24 @@
 import UIKit
 import RealmSwift
 
-class MainViewController: UITableViewController {
+class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
+    // Отлет таблицы
+    @IBOutlet weak var tableView: UITableView!
     
+    // Оутлет сегмента для сортировки
+    @IBOutlet weak var segmetedControl: UISegmentedControl!
+    
+    // Название кнопки для реверса сортировки
+    @IBOutlet weak var reverstSortingButton: UIBarButtonItem!
     
     
 
     // масив с заведениями с класса PlaceModel
     var places: Results<Place>!
+    
+    // Помошник для сортировки
+    var ascentigSorting = true
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,12 +37,12 @@ class MainViewController: UITableViewController {
     // MARK: - Table view data source
 
     // количество строк
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return places.isEmpty ? 0 : places.count
     }
 
     // Передает информацию в строку
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CustomTableViewCell
 
         // Упрощает конструкцию масива по индексу
@@ -63,7 +73,7 @@ class MainViewController: UITableViewController {
     
     // MARK: - Удаление из базы два метода
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         
         if editingStyle == .delete {
@@ -95,7 +105,7 @@ class MainViewController: UITableViewController {
     
     
     // Высота ячейки таблицы
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 85
     }
     
@@ -135,5 +145,38 @@ class MainViewController: UITableViewController {
         
         
     }
-
+    
+    // Сегмент контрол по дате или имени
+    @IBAction func sortSelection(_ sender: UISegmentedControl) {
+        
+        sorting()
+        tableView.reloadData()
+        
+    }
+    
+    // Реверсия сортировки
+    @IBAction func reversSorting(_ sender: Any) {
+        
+        ascentigSorting.toggle()
+        
+        if ascentigSorting {
+            reverstSortingButton.image = #imageLiteral(resourceName: "AZ")
+        } else {
+            reverstSortingButton.image = #imageLiteral(resourceName: "ZA")
+        }
+        sorting()
+        tableView.reloadData()
+    }
+    
+    // Метод сортировки по дате и имени
+    private func sorting() {
+        
+        if segmetedControl.selectedSegmentIndex == 0 {
+            places = places.sorted(byKeyPath: "date", ascending: ascentigSorting)
+        } else {
+            places = places.sorted(byKeyPath: "name", ascending: ascentigSorting)
+        }
+        
+        
+    }
 }
