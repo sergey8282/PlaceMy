@@ -9,8 +9,7 @@ import UIKit
 
 class NewPlaceViewController: UITableViewController {
     
-    // вспомогательное свойство для добавления нового заведения с типом данных Place (класс в классе PlaceModsel)
-    var newPlace = Place()
+
     
     // Вспомагательное свойство для добавления фото по умалчанию когда пользователь не указал фото
     var imageIsChanget = false
@@ -34,9 +33,6 @@ class NewPlaceViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        DispatchQueue.main.async {
-            self.newPlace.savePlaces()
-        }
         
         
         // убирает линии ниже нужных в таблице
@@ -108,15 +104,24 @@ class NewPlaceViewController: UITableViewController {
     // метод для добавления нового заведения и трансляции новых значений
     func saveNewPlace() {
         
+        // создаем переменную для записи изображения
         var image: UIImage?
         
+        // Если есть фото то присваивается если нет то по умолчанию
         if imageIsChanget {
             image = placeImage.image
         } else {
             image = #imageLiteral(resourceName: "imagePlaceholder")
         }
         
-//        newPlace = Place(name: plaseName.text!, location: plaseLocation.text, type: plaseType.text, image: image, restoranImage: nil)
+        // переводим тип данных из UIImage в Data потдерживаемый базой данных
+        let imageData = image?.pngData()
+        
+        // конструктор полей передоваемых значений в классе
+        let newPlace = Place(name: plaseName.text!, location: plaseLocation.text, type: plaseType.text, imageData: imageData)
+        
+        // записываем данные в базу данных
+        StorageManager.saveObject(newPlace)
     }
 
     
